@@ -1,9 +1,12 @@
 package com.dima.dao.implementation;
 
-import com.dima.dao.DataSourceConnection;
 import com.dima.dao.GenericDAO;
 import com.dima.models.Film;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,21 +14,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
+@PropertySource("classpath:database.properties")
 public class FilmDAO implements GenericDAO<Film, Integer> {
+    @Autowired
+    private DataSource dataSource;
+
     @Override
     public List<Film> getAll() {
         List<Film> filmList = new ArrayList<>();
-        try (Connection connection = DataSourceConnection.getInstance().getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM FILM");
              ResultSet resultSet = preparedStatement.executeQuery()) {
-            while ((resultSet.next())) {
-                Film film = new Film();
-                film.setId(resultSet.getInt(1));
-                film.setName(resultSet.getString(2));
-                film.setDuration(resultSet.getInt(3));
-                film.setActive(resultSet.getBoolean(4));
-                filmList.add(film);
-            }
+            while (resultSet.next())
+                filmList.add(Film.builder()
+                        .id(resultSet.getInt(1))
+                        .name(resultSet.getString(2))
+                        .duration(resultSet.getInt(3))
+                        .isActive(resultSet.getBoolean(4))
+                        .build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -35,7 +42,7 @@ public class FilmDAO implements GenericDAO<Film, Integer> {
     @Override
     public int update(Film entity) {
         int affectedRowsAmount = 0;
-        try (Connection connection = DataSourceConnection.getInstance().getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("UPDATE FILM " +
                      "SET NAME = ?, DURATION = ?, ACTIVE = ? WHERE ID = ?")) {
             preparedStatement.setString(1, entity.getName());
@@ -51,29 +58,28 @@ public class FilmDAO implements GenericDAO<Film, Integer> {
 
     @Override
     public Film getEntityById(Integer id) {
-        Film film = new Film();
-        try (Connection connection = DataSourceConnection.getInstance().getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM FILM WHERE ID = ?")) {
             preparedStatement.setInt(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while ((resultSet.next())) {
-                    film.setId(resultSet.getInt(1));
-                    film.setName(resultSet.getString(2));
-                    film.setDuration(resultSet.getInt(3));
-                    film.setActive(resultSet.getBoolean(4));
-                    break;
-                }
+                if (resultSet.next())
+                    return Film.builder()
+                            .id(resultSet.getInt(1))
+                            .name(resultSet.getString(2))
+                            .duration(resultSet.getInt(3))
+                            .isActive(resultSet.getBoolean(4))
+                            .build();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return film;
+        return null;
     }
 
     @Override
     public int delete(Integer id) {
         int affectedRowsAmount = 0;
-        try (Connection connection = DataSourceConnection.getInstance().getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM FILM WHERE ID = ?")) {
             preparedStatement.setInt(1, id);
             affectedRowsAmount = preparedStatement.executeUpdate();
@@ -86,7 +92,7 @@ public class FilmDAO implements GenericDAO<Film, Integer> {
     @Override
     public int create(Film entity) {
         int affectedRowsAmount = 0;
-        try (Connection connection = DataSourceConnection.getInstance().getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO FILM " +
                      "(NAME, DURATION, ACTIVE) VALUES (?, ?, ?)")) {
             preparedStatement.setString(1, entity.getName());

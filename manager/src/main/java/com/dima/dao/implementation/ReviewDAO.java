@@ -1,9 +1,12 @@
 package com.dima.dao.implementation;
 
-import com.dima.dao.DataSourceConnection;
 import com.dima.dao.GenericDAO;
 import com.dima.models.Review;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,21 +14,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
+@PropertySource("classpath:database.properties")
 public class ReviewDAO implements GenericDAO<Review, Integer> {
+    @Autowired
+    private DataSource dataSource;
+
     @Override
     public List<Review> getAll() {
         List<Review> reviewList = new ArrayList<>();
-        try (Connection connection = DataSourceConnection.getInstance().getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM REVIEW");
              ResultSet resultSet = preparedStatement.executeQuery()) {
-            while ((resultSet.next())) {
-                Review review = new Review();
-                review.setId(resultSet.getInt(1));
-                review.setFilmId(resultSet.getInt(2));
-                review.setCriticId(resultSet.getInt(3));
-                review.setComment(resultSet.getString(4));
-                reviewList.add(review);
-            }
+            while (resultSet.next())
+                reviewList.add(Review.builder()
+                        .id(resultSet.getInt(1))
+                        .filmId(resultSet.getInt(2))
+                        .criticId(resultSet.getInt(3))
+                        .comment(resultSet.getString(4))
+                        .build());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -35,7 +42,7 @@ public class ReviewDAO implements GenericDAO<Review, Integer> {
     @Override
     public int update(Review entity) {
         int affectedRowsAmount = 0;
-        try (Connection connection = DataSourceConnection.getInstance().getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("UPDATE REVIEW " +
                      "SET FILM_ID = ?, CRITIC_ID = ?, COMMENT = ? WHERE ID = ?")) {
             preparedStatement.setInt(1, entity.getFilmId());
@@ -51,29 +58,28 @@ public class ReviewDAO implements GenericDAO<Review, Integer> {
 
     @Override
     public Review getEntityById(Integer id) {
-        Review review = new Review();
-        try (Connection connection = DataSourceConnection.getInstance().getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM REVIEW WHERE ID = ?")) {
             preparedStatement.setInt(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while ((resultSet.next())) {
-                    review.setId(resultSet.getInt(1));
-                    review.setFilmId(resultSet.getInt(2));
-                    review.setCriticId(resultSet.getInt(3));
-                    review.setComment(resultSet.getString(4));
-                    break;
-                }
+                if (resultSet.next())
+                    return Review.builder()
+                            .id(resultSet.getInt(1))
+                            .filmId(resultSet.getInt(2))
+                            .criticId(resultSet.getInt(3))
+                            .comment(resultSet.getString(4))
+                            .build();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return review;
+        return null;
     }
 
     @Override
     public int delete(Integer id) {
         int affectedRowsAmount = 0;
-        try (Connection connection = DataSourceConnection.getInstance().getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM REVIEW WHERE ID = ?")) {
             preparedStatement.setInt(1, id);
             affectedRowsAmount = preparedStatement.executeUpdate();
@@ -86,7 +92,7 @@ public class ReviewDAO implements GenericDAO<Review, Integer> {
     @Override
     public int create(Review entity) {
         int affectedRowsAmount = 0;
-        try (Connection connection = DataSourceConnection.getInstance().getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO REVIEW " +
                      "(FILM_ID, CRITIC_ID, COMMENT) VALUES (?, ?, ?)")) {
             preparedStatement.setInt(1, entity.getFilmId());
