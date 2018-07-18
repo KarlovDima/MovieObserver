@@ -5,8 +5,11 @@ import com.dima.dao.row.mappers.FilmScreeningMapper;
 import com.dima.models.FilmScreening;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 @Component
@@ -44,8 +47,17 @@ public class FilmScreeningDAO implements GenericDAO<FilmScreening, Integer> {
     }
 
     @Override
-    public int create(FilmScreening entity) {
-        return jdbcTemplate.update(INSERT_FILM_SCREENING, entity.getFilmId(), entity.getTime());
+    public FilmScreening create(FilmScreening entity) {
+        GeneratedKeyHolder holder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement statement = connection.prepareStatement(INSERT_FILM_SCREENING, Statement.RETURN_GENERATED_KEYS);
+            statement.setInt(1, entity.getFilmId());
+            statement.setString(2, entity.getTime());
+            return statement;
+        }, holder);
+        entity.setId(holder.getKey().intValue());
+
+        return entity;
     }
 }
 

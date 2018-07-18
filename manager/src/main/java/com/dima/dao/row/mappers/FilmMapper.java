@@ -16,6 +16,8 @@ public class FilmMapper implements RowMapper<Film> {
                 .name(resultSet.getString(2))
                 .duration(resultSet.getInt(3))
                 .isActive(resultSet.getBoolean(4))
+                .host(resultSet.getString(5))
+                .port(resultSet.getInt(6))
                 .build();
     }
 }

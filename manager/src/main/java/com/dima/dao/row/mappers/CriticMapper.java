@@ -16,6 +16,8 @@ public class CriticMapper implements RowMapper<Critic> {
                 .name(resultSet.getString(2))
                 .workBeginning(resultSet.getString(3))
                 .workEnding(resultSet.getString(4))
+                .host(resultSet.getString(5))
+                .port(resultSet.getInt(6))
                 .build();
     }
 }
