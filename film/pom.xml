@@ -11,5 +11,11 @@
 
     <artifactId>film</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.dima</groupId>
+            <artifactId>utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>
