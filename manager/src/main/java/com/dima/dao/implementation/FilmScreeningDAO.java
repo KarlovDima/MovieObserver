@@ -1,63 +1,40 @@
 package com.dima.dao.implementation;
 
-import com.dima.dao.GenericDAO;
-import com.dima.dao.row.mappers.FilmScreeningMapper;
+import com.dima.dao.ResourceNotFoundException;
+import com.dima.dao.repositories.FilmScreeningRepository;
 import com.dima.models.FilmScreening;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 
 @Component
-public class FilmScreeningDAO implements GenericDAO<FilmScreening, Integer> {
+public class FilmScreeningDAO {
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private FilmScreeningRepository filmScreeningRepository;
 
-    @Autowired
-    private FilmScreeningMapper filmScreeningMapper;
-
-    private final String GET_ALL_FILM_SCREENINGS = "SELECT * FROM FILM_SCREENING";
-    private final String UPDATE_FILM_SCREENING = "UPDATE FILM_SCREENING SET FILM_ID = ?, TIME = ? WHERE ID = ?";
-    private final String GET_FILM_SCREENING = "SELECT * FROM FILM_SCREENING WHERE ID = ?";
-    private final String DELETE_FILM_SCREENING = "DELETE FROM FILM_SCREENING WHERE ID = ?";
-    private final String INSERT_FILM_SCREENING = "INSERT INTO FILM_SCREENING (FILM_ID, TIME) VALUES (?, ?)";
-
-    @Override
-    public List<FilmScreening> getAll() {
-        return jdbcTemplate.query(GET_ALL_FILM_SCREENINGS, filmScreeningMapper);
+    public List<FilmScreening> getAllFilmScreenings() {
+        return filmScreeningRepository.findAll();
     }
 
-    @Override
-    public int update(FilmScreening entity) {
-        return jdbcTemplate.update(UPDATE_FILM_SCREENING, entity.getFilmId(), entity.getTime());
+    public FilmScreening createFilmScreening(FilmScreening filmScreening) {
+        return filmScreeningRepository.save(filmScreening);
     }
 
-    @Override
-    public FilmScreening getEntityById(Integer id) {
-        return jdbcTemplate.queryForObject(GET_FILM_SCREENING, new Object[]{id}, filmScreeningMapper);
+    public FilmScreening getFilmScreeningById(int id) {
+        return filmScreeningRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("FilmScreening", "id", id));
     }
 
-    @Override
-    public int delete(Integer id) {
-        return jdbcTemplate.update(DELETE_FILM_SCREENING, id);
+    public FilmScreening updateFilmScreening(FilmScreening filmScreening) {
+        return filmScreeningRepository.save(filmScreening);
     }
 
-    @Override
-    public FilmScreening create(FilmScreening entity) {
-        GeneratedKeyHolder holder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement statement = connection.prepareStatement(INSERT_FILM_SCREENING, Statement.RETURN_GENERATED_KEYS);
-            statement.setInt(1, entity.getFilmId());
-            statement.setString(2, entity.getTime());
-            return statement;
-        }, holder);
-        entity.setId(holder.getKey().intValue());
+    public ResponseEntity deleteFilmScreening(int id) {
+        FilmScreening filmScreening = filmScreeningRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("FilmScreening", "id", id));
+        filmScreeningRepository.delete(filmScreening);
 
-        return entity;
+        return ResponseEntity.ok().build();
     }
 }
 

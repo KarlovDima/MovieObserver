@@ -1,65 +1,39 @@
 package com.dima.dao.implementation;
 
-import com.dima.dao.GenericDAO;
-import com.dima.dao.row.mappers.CriticMapper;
+import com.dima.dao.repositories.CriticRepository;
+import com.dima.dao.ResourceNotFoundException;
 import com.dima.models.Critic;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 
 @Component
-public class CriticDAO implements GenericDAO<Critic, Integer> {
+public class CriticDAO {
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private CriticRepository criticRepository;
 
-    @Autowired
-    private CriticMapper criticMapper;
-
-    private final String GET_ALL_CRITICS = "SELECT * FROM CRITIC";
-    private final String UPDATE_CRITIC = "UPDATE CRITIC SET NAME = ?, WORK_BEGINNING = ?, WORK_ENDING = ?, HOST = ?, PORT= ? WHERE ID = ?";
-    private final String GET_CRITIC = "SELECT * FROM CRITIC WHERE ID = ?";
-    private final String DELETE_CRITIC = "DELETE FROM CRITIC WHERE ID = ?";
-    private final String INSERT_CRITIC = "INSERT INTO CRITIC (NAME, WORK_BEGINNING, WORK_ENDING, HOST, PORT) VALUES (?, ?, ?, ?, ?)";
-
-    @Override
-    public List<Critic> getAll() {
-        return jdbcTemplate.query(GET_ALL_CRITICS, criticMapper);
+    public List<Critic> getAllCritics() {
+        return criticRepository.findAll();
     }
 
-    @Override
-    public int update(Critic entity) {
-        return jdbcTemplate.update(UPDATE_CRITIC, entity.getName(), entity.getWorkBeginning(), entity.getWorkEnding(), entity.getHost(), entity.getPort());
+    public Critic createCritic(Critic critic) {
+        return criticRepository.save(critic);
     }
 
-    @Override
-    public Critic getEntityById(Integer id) {
-        return jdbcTemplate.queryForObject(GET_CRITIC, new Object[]{id}, criticMapper);
+    public Critic getCriticById(int id) {
+        return criticRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Critic", "id", id));
     }
 
-    @Override
-    public int delete(Integer id) {
-        return jdbcTemplate.update(DELETE_CRITIC, id);
+    public Critic updateCritic(Critic critic) {
+        return criticRepository.save(critic);
     }
 
-    @Override
-    public Critic create(Critic entity) {
-        GeneratedKeyHolder holder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement statement = connection.prepareStatement(INSERT_CRITIC, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, entity.getName());
-            statement.setString(2, entity.getWorkBeginning());
-            statement.setString(3, entity.getWorkEnding());
-            statement.setString(4, entity.getHost());
-            statement.setInt(5, entity.getPort());
-            return statement;
-        }, holder);
-        entity.setId(holder.getKey().intValue());
+    public ResponseEntity deleteCritic(int id) {
+        Critic critic = criticRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Critic", "id", id));
+        criticRepository.delete(critic);
 
-        return entity;
+        return ResponseEntity.ok().build();
     }
 }

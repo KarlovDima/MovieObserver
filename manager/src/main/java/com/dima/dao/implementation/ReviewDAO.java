@@ -1,64 +1,40 @@
 package com.dima.dao.implementation;
 
-import com.dima.dao.GenericDAO;
-import com.dima.dao.row.mappers.ReviewMapper;
+import com.dima.dao.ResourceNotFoundException;
+import com.dima.dao.repositories.ReviewRepository;
 import com.dima.models.Review;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 
 @Component
-public class ReviewDAO implements GenericDAO<Review, Integer> {
+public class ReviewDAO {
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private ReviewRepository reviewRepository;
 
-    @Autowired
-    private ReviewMapper reviewMapper;
-
-    private final String GET_ALL_REVIEWS = "SELECT * FROM REVIEW";
-    private final String UPDATE_REVIEW = "UPDATE REVIEW SET FILM_ID = ?, CRITIC_ID = ?, COMMENT = ? WHERE ID = ?";
-    private final String GET_REVIEW = "SELECT * FROM REVIEW WHERE ID = ?";
-    private final String DELETE_REVIEW = "DELETE FROM REVIEW WHERE ID = ?";
-    private final String INSERT_REVIEW = "INSERT INTO REVIEW (FILM_ID, CRITIC_ID, COMMENT) VALUES (?, ?, ?)";
-
-    @Override
-    public List<Review> getAll() {
-        return jdbcTemplate.query(GET_ALL_REVIEWS, reviewMapper);
+    public List<Review> getAllReviews() {
+        return reviewRepository.findAll();
     }
 
-    @Override
-    public int update(Review entity) {
-        return jdbcTemplate.update(UPDATE_REVIEW, entity.getFilmId(), entity.getCriticId(), entity.getComment());
+    public Review createReview(Review review) {
+        return reviewRepository.save(review);
     }
 
-    @Override
-    public Review getEntityById(Integer id) {
-        return jdbcTemplate.queryForObject(GET_REVIEW, new Object[]{id}, reviewMapper);
+    public Review getReviewById(int id) {
+        return reviewRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Review", "id", id));
     }
 
-    @Override
-    public int delete(Integer id) {
-        return jdbcTemplate.update(DELETE_REVIEW, id);
+    public Review updateReview(Review review) {
+        return reviewRepository.save(review);
     }
 
-    @Override
-    public Review create(Review entity) {
-        GeneratedKeyHolder holder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement statement = connection.prepareStatement(INSERT_REVIEW, Statement.RETURN_GENERATED_KEYS);
-            statement.setInt(1, entity.getFilmId());
-            statement.setInt(2, entity.getCriticId());
-            statement.setString(3, entity.getComment());
-            return statement;
-        }, holder);
-        entity.setId(holder.getKey().intValue());
+    public ResponseEntity deleteReview(int id) {
+        Review review = reviewRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Review", "id", id));
+        reviewRepository.delete(review);
 
-        return entity;
+        return ResponseEntity.ok().build();
     }
 }
 
