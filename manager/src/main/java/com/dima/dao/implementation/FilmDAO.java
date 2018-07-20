@@ -26,7 +26,18 @@ public class FilmDAO {
         return filmRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
     }
 
-    public Film updateFilm(Film film) {
+    public Film updateFilm(int id, Film updatedFilm) {
+        Film film = filmRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
+
+        film.setName(updatedFilm.getName());
+        film.setDuration(updatedFilm.getDuration());
+        film.setActive(updatedFilm.isActive());
+        film.setHost(updatedFilm.getHost());
+        film.setPort(updatedFilm.getPort());
+        film.setReviews(updatedFilm.getReviews());
+        film.setFilmScreenings(updatedFilm.getFilmScreenings());
+
         return filmRepository.save(film);
     }
 

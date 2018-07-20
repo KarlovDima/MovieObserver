@@ -26,7 +26,14 @@ public class ReviewDAO {
         return reviewRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Review", "id", id));
     }
 
-    public Review updateReview(Review review) {
+    public Review updateReview(int id, Review updatedReview) {
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Review", "id", id));
+
+        review.setFilm(updatedReview.getFilm());
+        review.setCritic(updatedReview.getCritic());
+        review.setComment(updatedReview.getComment());
+
         return reviewRepository.save(review);
     }
 

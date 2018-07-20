@@ -1,5 +1,6 @@
 package com.dima.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class FilmScreening {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "film_id", nullable = false)
+    @JsonBackReference(value = "film-filmScreening")
     private Film film;
 
     @Column(name = "time")

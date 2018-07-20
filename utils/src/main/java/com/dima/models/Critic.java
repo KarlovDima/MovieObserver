@@ -1,5 +1,6 @@
 package com.dima.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +29,8 @@ public class Critic {
     @Column(name = "work_ending", nullable = false)
     private String workEnding;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "critic")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "critic", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "critic-review")
     private List<Review> reviews;
 
     @Column(name = "host", nullable = false)

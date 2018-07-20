@@ -4,7 +4,10 @@ import com.dima.dao.DAOFactory;
 import com.dima.models.Film;
 import com.dima.services.FilmService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class FilmServiceImpl implements FilmService {
@@ -13,6 +16,26 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film createFilm(Film film) {
-        return daoFactory.getFilmDAO().create(film);
+        return daoFactory.getFilmDAO().createFilm(film);
+    }
+
+    @Override
+    public List<Film> getAllFilms() {
+        return daoFactory.getFilmDAO().getAllFilms();
+    }
+
+    @Override
+    public Film getFilmById(int id) {
+        return daoFactory.getFilmDAO().getFilmById(id);
+    }
+
+    @Override
+    public Film updateFilm(int id, Film film) {
+        return daoFactory.getFilmDAO().updateFilm(id, film);
+    }
+
+    @Override
+    public ResponseEntity<Film> deleteFilm(int id) {
+        return daoFactory.getFilmDAO().deleteFilm(id);
     }
 }

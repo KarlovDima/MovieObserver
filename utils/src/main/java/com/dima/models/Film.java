@@ -1,9 +1,12 @@
 package com.dima.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
@@ -28,10 +31,14 @@ public class Film {
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "film")
+    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonManagedReference(value = "film-filmScreening")
     private List<FilmScreening> filmScreenings;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "film")
+    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonManagedReference(value = "film-review")
     private List<Review> reviews;
 
     @Column(name = "host")

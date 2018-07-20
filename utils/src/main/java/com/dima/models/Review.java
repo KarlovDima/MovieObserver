@@ -1,5 +1,6 @@
 package com.dima.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,10 +21,12 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "film_id", nullable = false)
+    @JsonBackReference(value = "film-review")
     private Film film;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "critic_id", nullable = false)
+    @JsonBackReference(value = "critic-review")
     private Critic critic;
 
     @Column(name = "comment")

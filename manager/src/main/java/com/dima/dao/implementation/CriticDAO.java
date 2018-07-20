@@ -1,7 +1,7 @@
 package com.dima.dao.implementation;
 
-import com.dima.dao.repositories.CriticRepository;
 import com.dima.dao.ResourceNotFoundException;
+import com.dima.dao.repositories.CriticRepository;
 import com.dima.models.Critic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,17 @@ public class CriticDAO {
         return criticRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Critic", "id", id));
     }
 
-    public Critic updateCritic(Critic critic) {
+    public Critic updateCritic(int id, Critic updatedCritic) {
+        Critic critic = criticRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Critic", "id", id));
+
+        critic.setName(updatedCritic.getName());
+        critic.setWorkBeginning(updatedCritic.getWorkBeginning());
+        critic.setWorkEnding(updatedCritic.getWorkEnding());
+        critic.setHost(updatedCritic.getHost());
+        critic.setPort(updatedCritic.getPort());
+        critic.setReviews(updatedCritic.getReviews());
+
         return criticRepository.save(critic);
     }
 
