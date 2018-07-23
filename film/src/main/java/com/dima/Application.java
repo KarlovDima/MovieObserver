@@ -12,7 +12,7 @@ import java.net.ServerSocket;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
     @Autowired
-    private FilmRegistrar filmRegistrar;
+    private Watcher watcher;
 
     public static void main(String[] args) {
         setHostAndPort();
@@ -22,7 +22,7 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        filmRegistrar.register();
+        watcher.watch();
     }
 
     private static void setHostAndPort() {

@@ -33,8 +33,6 @@ public class CriticDAO {
         critic.setName(updatedCritic.getName());
         critic.setWorkBeginning(updatedCritic.getWorkBeginning());
         critic.setWorkEnding(updatedCritic.getWorkEnding());
-        critic.setHost(updatedCritic.getHost());
-        critic.setPort(updatedCritic.getPort());
         critic.setReviews(updatedCritic.getReviews());
 
         return criticRepository.save(critic);

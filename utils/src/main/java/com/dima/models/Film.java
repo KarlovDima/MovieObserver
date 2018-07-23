@@ -40,11 +40,4 @@ public class Film {
     @LazyCollection(LazyCollectionOption.FALSE)
     @JsonManagedReference(value = "film-review")
     private List<Review> reviews;
-
-    @Column(name = "host")
-    private String host;
-
-    @Column(name = "port")
-    private int port;
-
 }

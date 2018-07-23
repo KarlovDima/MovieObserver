@@ -8,20 +8,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FilmRegistrar {
-    @Value("${server.port}")
-    private int port;
-
-    @Value("${server.host}")
-    private String host;
-
-    @Value("${name}")
-    private String name;
-
-    @Value("${duration}")
-    private int duration;
-
-    @Value("${active}")
-    private boolean active;
+    @Value("${manager.base.url}")
+    private String managerURL;
 
     @Autowired
     private RestTemplateBuilder restTemplateBuilder;
@@ -29,15 +17,9 @@ public class FilmRegistrar {
     @Autowired
     private LogService logService;
 
-    public void register() {
-        Film film = restTemplateBuilder.build().postForObject("http://Carlitto-PC:8080/manager/v1/films", Film.builder()
-                .name(name)
-                .duration(duration)
-                .isActive(active)
-                .host(host)
-                .port(port)
-                .build(), Film.class);
+    public void register(Film film) {
+        restTemplateBuilder.build().postForObject(managerURL + "/manager/v1/films", film, Film.class);
 
-        logService.log("Registered object {}", film);
+        logService.log("Registered object");
     }
 }

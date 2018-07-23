@@ -32,10 +32,4 @@ public class Critic {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "critic", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "critic-review")
     private List<Review> reviews;
-
-    @Column(name = "host", nullable = false)
-    private String host;
-
-    @Column(name = "port", nullable = false)
-    private int port;
 }

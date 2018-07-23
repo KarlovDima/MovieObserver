@@ -33,8 +33,6 @@ public class FilmDAO {
         film.setName(updatedFilm.getName());
         film.setDuration(updatedFilm.getDuration());
         film.setActive(updatedFilm.isActive());
-        film.setHost(updatedFilm.getHost());
-        film.setPort(updatedFilm.getPort());
         film.setReviews(updatedFilm.getReviews());
         film.setFilmScreenings(updatedFilm.getFilmScreenings());
 
