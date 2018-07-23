@@ -1,8 +1,11 @@
 package com.dima.controllers.v1;
 
+import com.dima.ResponseMessage;
+import com.dima.dao.ResourceNotFoundException;
 import com.dima.models.Critic;
 import com.dima.services.CriticService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 
 import javax.ws.rs.*;
@@ -25,14 +28,22 @@ public class CriticController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createCritic(Critic critic) {
-        return Response.status(200).entity(criticService.createCritic(critic)).build();
+        try {
+            return Response.status(200).entity(criticService.createCritic(critic)).build();
+        } catch (DataIntegrityViolationException exc) {
+            return Response.status(400).entity(new ResponseMessage("The critic with this name is already exists")).build();
+        }
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCriticById(@PathParam("id") int id) {
-        return Response.status(200).entity(criticService.getCriticById(id)).build();
+        try {
+            return Response.status(200).entity(criticService.getCriticById(id)).build();
+        } catch (ResourceNotFoundException exc) {
+            return Response.status(404).entity(new ResponseMessage("No critic was found with this id")).build();
+        }
     }
 
     @PUT
@@ -40,7 +51,13 @@ public class CriticController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateCritic(@PathParam("id") int id, Critic critic) {
-        return Response.status(200).entity(criticService.updateCritic(id, critic)).build();
+        try {
+            return Response.status(200).entity(criticService.updateCritic(id, critic)).build();
+        } catch (ResourceNotFoundException exc) {
+            return Response.status(404).entity(new ResponseMessage("No critic was found with this id")).build();
+        } catch (DataIntegrityViolationException exc) {
+            return Response.status(400).entity(new ResponseMessage("The critic with this name is already exists")).build();
+        }
     }
 
     @DELETE
@@ -48,6 +65,10 @@ public class CriticController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCritic(@PathParam("id") int id) {
-        return Response.status(200).entity(criticService.deleteCritic(id)).build();
+        try {
+            return Response.status(200).entity(criticService.deleteCritic(id)).build();
+        } catch (ResourceNotFoundException exc) {
+            return Response.status(404).entity(new ResponseMessage("No critic was found with this id")).build();
+        }
     }
 }

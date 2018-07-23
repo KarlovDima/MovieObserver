@@ -1,5 +1,7 @@
 package com.dima.controllers.v1;
 
+import com.dima.ResponseMessage;
+import com.dima.dao.ResourceNotFoundException;
 import com.dima.models.Review;
 import com.dima.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,11 @@ public class ReviewController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getReviewById(@PathParam("id") int id) {
-        return Response.status(200).entity(reviewService.getReviewById(id)).build();
+        try {
+            return Response.status(200).entity(reviewService.getReviewById(id)).build();
+        } catch (ResourceNotFoundException exc) {
+            return Response.status(404).entity(new ResponseMessage("No review was found with this id")).build();
+        }
     }
 
     @PUT
@@ -40,7 +46,11 @@ public class ReviewController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateReview(@PathParam("id") int id, Review review) {
-        return Response.status(200).entity(reviewService.updateReview(id, review)).build();
+        try {
+            return Response.status(200).entity(reviewService.updateReview(id, review)).build();
+        } catch (ResourceNotFoundException exc) {
+            return Response.status(404).entity(new ResponseMessage("No review was found with this id")).build();
+        }
     }
 
     @DELETE
@@ -48,6 +58,10 @@ public class ReviewController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteReview(@PathParam("id") int id) {
-        return Response.status(200).entity(reviewService.deleteReview(id)).build();
+        try {
+            return Response.status(200).entity(reviewService.deleteReview(id)).build();
+        } catch (ResourceNotFoundException exc) {
+            return Response.status(404).entity(new ResponseMessage("No review was found with this id")).build();
+        }
     }
 }
