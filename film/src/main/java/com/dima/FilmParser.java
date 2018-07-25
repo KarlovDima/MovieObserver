@@ -13,8 +13,7 @@ import java.util.Scanner;
 
 @Component
 public class FilmParser {
-    public Film parse(String path) {
-        File file = new File(path);
+    public Film parse(File file) {
         Film film = new Film();
         List<FilmScreening> filmScreeningList = new ArrayList<>();
         try (Scanner scanner = new Scanner(file)) {

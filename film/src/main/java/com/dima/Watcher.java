@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -18,6 +19,9 @@ public class Watcher {
     @Autowired
     private FilmRegistrar filmRegistrar;
 
+    @Autowired
+    private FilmProcessor filmProcessor;
+
     public void watch() {
         try {
             WatchService watchService = FileSystems.getDefault().newWatchService();
@@ -26,7 +30,9 @@ public class Watcher {
             WatchKey watchKey;
             while ((watchKey = watchService.take()) != null) {
                 for (WatchEvent<?> event : watchKey.pollEvents()) {
-                    filmRegistrar.register(filmParser.parse(folderPath + "/" + event.context().toString()));
+                    File file = new File(folderPath + event.context().toString());
+                    filmRegistrar.register(filmParser.parse(file));
+                    filmProcessor.processFilm(file);
                 }
                 watchKey.reset();
             }
