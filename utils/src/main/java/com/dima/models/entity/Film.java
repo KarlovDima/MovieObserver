@@ -1,10 +1,6 @@
-package com.dima.models;
+package com.dima.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -12,9 +8,9 @@ import javax.persistence.*;
 import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "film")
 public class Film {
@@ -26,18 +22,18 @@ public class Film {
     private String name;
 
     @Column(name = "duration", nullable = false)
-    private int duration;
+    private String duration;
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
     @OneToMany(mappedBy = "film", cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
-    @JsonManagedReference(value = "film-filmScreening")
+    @ToString.Exclude
     private List<FilmScreening> filmScreenings;
 
     @OneToMany(mappedBy = "film", cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
-    @JsonManagedReference(value = "film-review")
+    @ToString.Exclude
     private List<Review> reviews;
 }

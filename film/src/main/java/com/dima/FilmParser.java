@@ -1,7 +1,7 @@
 package com.dima;
 
-import com.dima.models.Film;
-import com.dima.models.FilmScreening;
+import com.dima.models.entity.Film;
+import com.dima.models.entity.FilmScreening;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -18,7 +18,7 @@ public class FilmParser {
         List<FilmScreening> filmScreeningList = new ArrayList<>();
         try (Scanner scanner = new Scanner(file)) {
             film.setName(file.getName().substring(0, file.getName().lastIndexOf(".")));
-            film.setDuration(scanner.nextInt());
+            film.setDuration(scanner.nextLine());
             film.setActive(scanner.nextBoolean());
             String[] filmScreenings = scanner.next().split(",");
             Arrays.stream(filmScreenings).forEach(s -> filmScreeningList.add(FilmScreening.builder().film(film).time(s).build()));

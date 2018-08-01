@@ -1,7 +1,7 @@
 package com.dima.services.implementation;
 
 import com.dima.dao.DAOFactory;
-import com.dima.models.FilmScreening;
+import com.dima.models.entity.FilmScreening;
 import com.dima.services.FilmScreeningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
 package com.dima.dao.repositories;
 
-import com.dima.models.FilmScreening;
+import com.dima.models.entity.FilmScreening;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

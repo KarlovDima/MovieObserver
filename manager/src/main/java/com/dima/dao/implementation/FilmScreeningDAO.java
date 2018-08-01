@@ -2,7 +2,7 @@ package com.dima.dao.implementation;
 
 import com.dima.dao.ResourceNotFoundException;
 import com.dima.dao.repositories.FilmScreeningRepository;
-import com.dima.models.FilmScreening;
+import com.dima.models.entity.FilmScreening;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

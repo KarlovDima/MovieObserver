@@ -1,6 +1,6 @@
 package com.dima.services;
 
-import com.dima.models.Critic;
+import com.dima.models.entity.Critic;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

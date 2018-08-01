@@ -1,4 +1,4 @@
-package com.dima;
+package com.dima.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.AllArgsConstructor;

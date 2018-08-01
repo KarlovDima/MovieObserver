@@ -1,6 +1,5 @@
-package com.dima.models;
+package com.dima.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "film_screening")
 public class FilmScreening {
@@ -21,7 +20,6 @@ public class FilmScreening {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "film_id", nullable = false)
-    @JsonBackReference(value = "film-filmScreening")
     private Film film;
 
     @Column(name = "time")

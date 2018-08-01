@@ -1,18 +1,14 @@
-package com.dima.models;
+package com.dima.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "critic")
 public class Critic {
@@ -30,6 +26,12 @@ public class Critic {
     private String workEnding;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "critic", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "critic-review")
+    @ToString.Exclude
     private List<Review> reviews;
+
+    @Column(name = "host")
+    private String host;
+
+    @Column(name = "port")
+    private int port;
 }

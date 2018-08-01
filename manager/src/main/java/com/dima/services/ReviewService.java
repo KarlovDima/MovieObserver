@@ -1,6 +1,6 @@
 package com.dima.services;
 
-import com.dima.models.Review;
+import com.dima.models.entity.Review;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

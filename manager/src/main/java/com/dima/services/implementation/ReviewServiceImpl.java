@@ -1,7 +1,7 @@
 package com.dima.services.implementation;
 
 import com.dima.dao.DAOFactory;
-import com.dima.models.Review;
+import com.dima.models.entity.Review;
 import com.dima.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

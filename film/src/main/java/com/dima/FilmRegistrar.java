@@ -1,6 +1,6 @@
 package com.dima;
 
-import com.dima.models.Film;
+import com.dima.models.entity.Film;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;

@@ -1,6 +1,6 @@
 package com.dima.services;
 
-import com.dima.models.Film;
+import com.dima.models.entity.Film;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
