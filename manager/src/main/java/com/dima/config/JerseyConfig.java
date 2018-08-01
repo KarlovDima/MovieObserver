@@ -1,4 +1,4 @@
-package com.dima;
+package com.dima.config;
 
 import com.dima.controllers.v1.CriticController;
 import com.dima.controllers.v1.FilmController;
