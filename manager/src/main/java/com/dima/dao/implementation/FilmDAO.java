@@ -2,7 +2,7 @@ package com.dima.dao.implementation;
 
 import com.dima.dao.ResourceNotFoundException;
 import com.dima.dao.repositories.FilmRepository;
-import com.dima.models.Film;
+import com.dima.models.entity.Film;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class FilmDAO {
     @Autowired
     private FilmRepository filmRepository;
 
-    public List<Film> getAllFilms() {
+    public List<Film> findAllFilms() {
         return filmRepository.findAll();
     }
 
@@ -44,5 +44,9 @@ public class FilmDAO {
         filmRepository.delete(film);
 
         return ResponseEntity.ok().build();
+    }
+
+    public List<Film> findAllActiveFilms() {
+        return filmRepository.findAllActiveFilms();
     }
 }
